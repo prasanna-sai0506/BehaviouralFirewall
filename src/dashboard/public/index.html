@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Behavioral Firewall Dashboard</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+                <span>Behavioral Firewall</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="/dashboard" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li><a href="/threats"><i class="fas fa-exclamation-triangle"></i> Threat Logs</a></li>
+                <li><a href="/blockchain"><i class="fas fa-link"></i> Blockchain</a></li>
+                <li><a href="/firewall"><i class="fas fa-fire"></i> Firewall Rules</a></li>
+                <li><a href="/analytics"><i class="fas fa-chart-bar"></i> Analytics</a></li>
+            </ul>
+            <div class="system-status">
+                <div class="status-item">
+                    <span class="status-indicator online" id="systemStatus"></span>
+                    <span>System: <span id="systemStatusText">Loading...</span></span>
+                </div>
+                <div class="status-item">
+                    <span class="status-indicator" id="dbStatus"></span>
+                    <span>Database: <span id="dbStatusText">Loading...</span></span>
+                </div>
+                <div class="status-item">
+                    <span class="status-indicator" id="blockchainStatus"></span>
+                    <span>Blockchain: <span id="blockchainStatusText">Loading...</span></span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <h1>Behavioral Firewall Dashboard</h1>
+                <div class="header-actions">
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="Search threats, blocks...">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="header-buttons">
+                        <button class="btn btn-secondary" id="refreshBtn">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                        <button class="btn btn-primary" id="exportBtn">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <i class="fas fa-shield-alt"></i>
+                        <span class="stat-label">Total Threats</span>
+                    </div>
+                    <div class="stat-value" id="totalThreats">0</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Real-time</span>
+                    </div>
+                </div>
+                <div class="stat-card danger">
+                    <div class="stat-header">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span class="stat-label">High Risk</span>
+                    </div>
+                    <div class="stat-value" id="highThreats">0</div>
+                    <div class="stat-change negative">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Monitor</span>
+                    </div>
+                </div>
+                <div class="stat-card success">
+                    <div class="stat-header">
+                        <i class="fas fa-link"></i>
+                        <span class="stat-label">Blockchain Blocks</span>
+                    </div>
+                    <div class="stat-value" id="blockchainBlocks">0</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-check"></i>
+                        <span>Valid</span>
+                    </div>
+                </div>
+                <div class="stat-card warning">
+                    <div class="stat-header">
+                        <i class="fas fa-fire"></i>
+                        <span class="stat-label">Firewall Rules</span>
+                    </div>
+                    <div class="stat-value" id="firewallRules">0</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-shield"></i>
+                        <span>Active</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts and Real-time Data -->
+            <div class="content-grid">
+                <div class="chart-container">
+                    <div class="chart-card">
+                        <h3>Threat Distribution</h3>
+                        <div class="chart-actions">
+                            <button class="btn btn-sm btn-secondary" id="refreshChart">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
+                        <div id="threatChart" class="chart"></div>
+                    </div>
+                </div>
+                <div class="realtime-container">
+                    <div class="realtime-card">
+                        <h3>Real-time Threats</h3>
+                        <div class="realtime-actions">
+                            <span class="badge" id="realtimeCount">0</span>
+                        </div>
+                        <div id="realtimeThreats" class="threat-list">
+                            <div class="empty-state">
+                                <i class="fas fa-shield-alt"></i>
+                                <p>No recent threats detected</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Threats Table -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h3>Recent Threat Events</h3>
+                    <div class="table-actions">
+                        <div class="filter-group">
+                            <select id="typeFilter" class="filter-select">
+                                <option value="">All Types</option>
+                                <option value="SUSPICIOUS_PORT">Suspicious Port</option>
+                                <option value="BLACKLISTED_PROCESS">Blacklisted Process</option>
+                                <option value="PRIVILEGE_ESCALATION">Privilege Escalation</option>
+                                <option value="LOGON_FAILURE">Logon Failure</option>
+                            </select>
+                            <select id="riskFilter" class="filter-select">
+                                <option value="">All Risks</option>
+                                <option value="HIGH">High</option>
+                                <option value="MEDIUM">Medium</option>
+                                <option value="LOW">Low</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-secondary" id="refreshTable">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+                <div class="table-wrapper">
+                    <table class="threat-table" id="threatTable">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Type</th>
+                                <th>Source</th>
+                                <th>Risk Level</th>
+                                <th>Score</th>
+                                <th>Description</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="threatTableBody">
+                            <tr>
+                                <td colspan="7" class="loading-cell">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                    Loading threats...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="table-footer">
+                    <div class="pagination" id="pagination">
+                        <!-- Pagination will be inserted here -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Notification Container -->
+    <div id="notificationContainer" class="notification-container"></div>
+
+    <!-- Scripts -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/js/dashboard.js"></script>
+    <script src="/js/charts.js"></script>
+    <script src="/js/realtime.js"></script>
+</body>
+
+</html>

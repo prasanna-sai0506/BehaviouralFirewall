@@ -1,0 +1,22 @@
+{
+  "application": {
+    "name": "Behavioral Firewall",
+    "version": "1.0.0"
+  },
+  "monitoring": {
+    "systemLogInterval": 5000,
+    "networkLogInterval": 3000,
+    "behavioralCheckInterval": 10000,
+    "threatScoreThreshold": 70
+  },
+  "blockchain": {
+    "difficulty": 2,
+    "miningReward": 100,
+    "networkNodes": []
+  },
+  "firewall": {
+    "autoBlockHighThreats": true,
+    "rulePropagation": true,
+    "maxRulesPerNode": 1000
+  }
+}
