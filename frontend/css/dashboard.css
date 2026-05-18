@@ -1,0 +1,37 @@
+/* Dashboard specific styles */
+.stat-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: var(--primary);
+    opacity: 0.3;
+}
+
+.stat-card:nth-child(2)::after { background: var(--danger); }
+.stat-card:nth-child(3)::after { background: var(--warning); }
+.stat-card:nth-child(4)::after { background: var(--success); }
+
+#threat-feed tr {
+    transition: background 0.3s;
+}
+
+#threat-feed tr:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.new-item-flash {
+    animation: flash 1s ease-out;
+}
+
+@keyframes flash {
+    0% { background-color: rgba(0, 212, 255, 0.2); }
+    100% { background-color: transparent; }
+}

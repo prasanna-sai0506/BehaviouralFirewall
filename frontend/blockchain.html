@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blockchain Explorer - SHIELD</title>
+    <link rel="stylesheet" href="css/main.css">
+    <style>
+        .block-card {
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--primary);
+        }
+        .tx-list {
+            margin-top: 1rem;
+            background: rgba(0,0,0,0.2);
+            padding: 1rem;
+            border-radius: 0.5rem;
+        }
+        .hash { font-family: monospace; color: var(--text-dim); word-break: break-all; }
+    </style>
+</head>
+<body>
+    <div class="app-wrapper">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">B</div>
+                NERV <span>BEHAVIORAL FIREWALL</span>
+                <span class="version-badge">v1.0.0-STABLE</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 2rem; font-size: 11px;">
+                <div id="integrity-status" style="display: flex; align-items: center; gap: 0.5rem; background: rgba(0, 255, 136, 0.1); border: 1px solid var(--success); padding: 4px 12px; border-radius: 4px; color: var(--success);">
+                    <div style="width: 6px; height: 6px; background: var(--success); border-radius: 50%;"></div>
+                    <span style="font-weight: 700;">CHAIN VALID</span>
+                </div>
+                <button class="btn btn-primary" onclick="verifyChain()">VERIFY INTEGRITY</button>
+                <button class="btn btn-outline" onclick="logout()">Logout</button>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <nav class="sidebar">
+                <a href="dashboard.html" title="Dashboard">▣ <span>Dashboard</span></a>
+                <a href="logs.html" title="Logs">☵ <span>Logs</span></a>
+                <a href="blockchain.html" class="active" title="Blockchain">⌬ <span>Ledger</span></a>
+                <a href="firewall.html" title="Firewall">⛨ <span>Firewall</span></a>
+                <a href="ml.html" title="ML Models">⚙ <span>Settings</span></a>
+            </nav>
+
+            <main class="page-container">
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
+                    <div class="card" style="padding: 1rem;">
+                        <div style="font-size: 9px; color: var(--text-dim); text-transform: uppercase;">Total Blocks</div>
+                        <div id="stat-blocks" style="font-size: 20px; font-weight: bold; color: var(--primary);">--</div>
+                    </div>
+                    <div class="card" style="padding: 1rem;">
+                        <div style="font-size: 9px; color: var(--text-dim); text-transform: uppercase;">Total Transactions</div>
+                        <div id="stat-txs" style="font-size: 20px; font-weight: bold; color: var(--success);">--</div>
+                    </div>
+                    <div class="card" style="padding: 1rem;">
+                        <div style="font-size: 9px; color: var(--text-dim); text-transform: uppercase;">Difficulty</div>
+                        <div id="stat-difficulty" style="font-size: 20px; font-weight: bold; color: var(--warning);">--</div>
+                    </div>
+                    <div class="card" style="padding: 1rem;">
+                        <div style="font-size: 9px; color: var(--text-dim); text-transform: uppercase;">Security Level</div>
+                        <div style="font-size: 20px; font-weight: bold; color: var(--success);">SHA-256</div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-bottom: 1.5rem; background: rgba(0, 212, 255, 0.03); border: 1px dashed var(--primary); padding: 0.75rem;">
+                    <div style="font-size: 11px; display: flex; gap: 10px; align-items: center;">
+                        <span style="color: var(--primary); font-weight: bold;">[HOW TO EXPLORE]</span>
+                        <span>Each block in the ledger contains a cryptographic proof (hash) and a batch of audited logs. You can search by IP or Hash, or click 'View Raw Data' to see the JSON payload stored permanently on the chain.</span>
+                    </div>
+                </div>
+
+                <div class="card" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <div style="display: flex; flex-direction: column;">
+                        <h2 style="font-size: 14px; font-weight: 700; text-transform: uppercase; margin: 0; color: var(--primary);">Ledger Explorer</h2>
+                        <span style="font-size: 10px; color: var(--text-dim); margin-top: 4px;">IMMUTABLE AUDIT TRAIL OF SYSTEM ACTIONS</span>
+                    </div>
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <input type="text" id="search-ledger" placeholder="Search by Hash or Data..." onkeyup="filterBlocks()" 
+                               style="background: var(--bg-dark); border: 1px solid var(--border-subtle); color: #fff; padding: 0.5rem 1rem; border-radius: 4px; font-size: 11px; width: 250px;">
+                        <div style="text-align: right; font-size: 11px; font-family: monospace; border-left: 1px solid var(--border-subtle); padding-left: 1rem;">
+                            <div style="opacity: 0.5;">LAST_BLOCK_HASH</div>
+                            <div id="last-hash" style="color: var(--primary);">INITIALIZING...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="blocks-container" style="display: flex; flex-direction: column; gap: 1rem;">
+                    <!-- Blocks loaded here -->
+                </div>
+            </main>
+        </div>
+
+        <footer>
+            <div style="display: flex; gap: 1.5rem;">
+                <span>PROTOCOL: <span style="color: var(--primary);">PY-BFT-v1</span></span>
+                <span>CONSENSUS: <span style="color: var(--success);">POW-AUTH</span></span>
+            </div>
+            <div>
+                Blockchain Engine v1.0.0
+            </div>
+        </footer>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/blockchain.js"></script>
+</body>
+</html>

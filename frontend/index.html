@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Behavioral Firewall</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        .login-container {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-card {
+            width: 400px;
+            padding: 3rem;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-dim);
+        }
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            background: #0f172a;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.5rem;
+            color: white;
+            box-sizing: border-box;
+        }
+        .login-title {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .login-title h1 {
+            color: var(--primary);
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="card login-card" style="border-top: 4px solid var(--primary);">
+            <div class="login-title">
+                <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.2em; color: var(--text-dim); margin-bottom: 0.5rem;">Secure Access Portal</div>
+                <h1 style="font-size: 2rem; font-weight: 800; letter-spacing: -2px;">NERV <span style="color: var(--primary);">SHIELD</span></h1>
+                <div style="font-family: monospace; font-size: 9px; margin-top: 0.5rem; opacity: 0.5;">v1.0.0-PROD-STABLE</div>
+            </div>
+            
+            <div id="login-form" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                <div class="form-group">
+                    <label class="stat-label">System Credentials</label>
+                    <input type="email" id="email" placeholder="ADMINID@SHIELD.CORP" style="background: var(--bg-dark); border: 1px solid var(--border-subtle); color: #fff; padding: 0.75rem; width: 100%; border-radius: 2px; font-family: monospace; font-size: 11px;">
+                </div>
+                <div class="form-group">
+                    <label class="stat-label">Authentication Key</label>
+                    <input type="password" id="password" placeholder="••••••••" style="background: var(--bg-dark); border: 1px solid var(--border-subtle); color: #fff; padding: 0.75rem; width: 100%; border-radius: 2px; font-family: monospace; font-size: 11px;">
+                </div>
+                
+                <div style="margin: 0.5rem 0;">
+                    <button class="btn btn-primary" style="width: 100%; padding: 1rem; font-size: 13px; letter-spacing: 1px;" onclick="handleLogin()">INITIALIZE HANDSHAKE</button>
+                    <div style="text-align: center; font-size: 9px; margin-top: 1rem; color: var(--text-dim); font-family: monospace;">
+                        AES-256 ENCRYPTION ACTIVE
+                    </div>
+                </div>
+
+                <p id="error-msg" style="color: var(--danger); text-align: center; font-size: 10px; font-family: monospace; text-transform: uppercase; margin: 0; background: rgba(255, 68, 68, 0.1); padding: 0.5rem; border: 1px solid var(--danger); display: none;"></p>
+            </div>
+        </div>
+
+        <div style="position: fixed; bottom: 2rem; width: 100%; text-align: center; color: var(--text-dim); font-size: 9px; font-family: monospace; pointer-events: none; opacity: 0.5;">
+            UNAUTHORIZED ACCESS IS PROHIBITED. ALL ACTIONS ARE LOGGED TO THE IMMUTABLE LEDGER.
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        async function handleLogin() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorMsg = document.getElementById('error-msg');
+
+            try {
+                const response = await api.post('/auth/login', { email, password });
+                if (response.success) {
+                    localStorage.setItem('token', response.data.access_token);
+                    localStorage.setItem('user', JSON.stringify(response.data));
+                    window.location.href = 'dashboard.html';
+                } else {
+                    errorMsg.innerText = response.message || 'Login failed';
+                    errorMsg.style.display = 'block';
+                }
+            } catch (err) {
+                errorMsg.innerText = 'Server error. Authentication failed.';
+                errorMsg.style.display = 'block';
+            }
+        }
+        
+        // Auto-login if token exists
+        if (localStorage.getItem('token')) {
+            window.location.href = 'dashboard.html';
+        }
+    </script>
+</body>
+</html>

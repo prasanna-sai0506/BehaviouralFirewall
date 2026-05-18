@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firewall Rules - SHIELD</title>
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+    <div class="app-wrapper">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">B</div>
+                NERV <span>BEHAVIORAL FIREWALL</span>
+                <span class="version-badge">v1.0.0-STABLE</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 2rem; font-size: 11px;">
+                <div style="display: flex; flex-direction: column; align-items: flex-end;">
+                    <span id="username" style="color: var(--primary); font-family: monospace;">Admin</span>
+                </div>
+                <button class="btn btn-outline" onclick="logout()" style="padding: 0.25rem 0.5rem;">Logout</button>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <nav class="sidebar">
+                <a href="dashboard.html" title="Dashboard">▣ <span>Dashboard</span></a>
+                <a href="logs.html" title="Logs">☵ <span>Logs</span></a>
+                <a href="blockchain.html" title="Blockchain">⌬ <span>Ledger</span></a>
+                <a href="firewall.html" class="active" title="Firewall">⛨ <span>Firewall</span></a>
+                <a href="ml.html" title="ML Models">⚙ <span>Settings</span></a>
+            </nav>
+
+            <main class="page-container">
+                <div class="grid grid-cols-12" style="flex: 1; min-height: 0;">
+                    <section class="card" style="grid-column: span 8; display: flex; flex-direction: column; padding: 0; overflow: hidden;">
+                        <div style="padding: 0.75rem 1rem; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center;">
+                            <h2 style="font-size: 11px; font-weight: 700; text-transform: uppercase; margin: 0; color: var(--primary);">Active Firewall Policies</h2>
+                            <div id="firewall-status-container" style="display: flex; align-items: center; gap: 8px;">
+                                <div id="fw-status-pulse" class="pulse" style="width: 8px; height: 8px; border-radius: 50%; background: var(--success); box-shadow: 0 0 10px var(--success);"></div>
+                                <span id="fw-status-text" style="font-size: 9px; font-family: monospace; opacity: 0.8; text-transform: uppercase;">SERVICE: INITIALIZING</span>
+                            </div>
+                        </div>
+                        <div style="flex: 1; overflow-y: auto;">
+                            <table id="rules-table">
+                                <thead>
+                                    <tr>
+                                        <th>Remote IP</th>
+                                        <th>Action</th>
+                                        <th>Port</th>
+                                        <th>Status</th>
+                                        <th style="text-align: right;">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    <aside style="grid-column: span 4;">
+                        <div class="card">
+                            <h3 style="font-size: 11px; font-weight: 700; text-transform: uppercase; margin: 0 0 1.5rem 0; color: var(--primary);">Manual Override</h3>
+                            <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+                                <div>
+                                    <label class="stat-label" style="display: block; margin-bottom: 0.5rem;">Target Remote IP</label>
+                                    <input type="text" id="rule-ip" placeholder="192.168.1.100" style="width:100%; padding: 0.6rem; background: var(--bg-dark); border: 1px solid var(--border-subtle); color: #fff; border-radius: 2px; font-family: monospace;">
+                                </div>
+                                <div class="grid grid-cols-2">
+                                    <div>
+                                        <label class="stat-label" style="display: block; margin-bottom: 0.5rem;">Policy Action</label>
+                                        <select id="rule-action" style="width:100%; padding: 0.6rem; background: var(--bg-dark); border: 1px solid var(--border-subtle); color: #fff; border-radius: 2px;">
+                                            <option value="block">BLOCK</option>
+                                            <option value="allow">ALLOW</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="stat-label" style="display: block; margin-bottom: 0.5rem;">Port Filter</label>
+                                        <input type="text" id="rule-port" value="any" style="width:100%; padding: 0.6rem; background: var(--bg-dark); border: 1px solid var(--border-subtle); color: #fff; border-radius: 2px; font-family: monospace;">
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary" onclick="addManualRule()" style="width: 100%; padding: 0.75rem;">DEPLOY RULE TO KERNEL</button>
+                            </div>
+                        </div>
+
+                        <div class="card" style="margin-top: 1rem; border-left-color: var(--warning);">
+                            <h4 style="font-size: 9px; text-transform: uppercase; margin: 0 0 0.5rem 0; color: var(--warning);">System Warning</h4>
+                            <p style="font-size: 11px; margin: 0; opacity: 0.7; line-height: 1.4;">Manual rules take precedence over ML-derived behavioral blocks. Use with caution to avoid network partitioning.</p>
+                        </div>
+                    </aside>
+                </div>
+            </main>
+        </div>
+
+        <footer>
+            <div style="display: flex; gap: 1.5rem;">
+                <span>NFTABLES: <span style="color: var(--success);">ENABLED</span></span>
+                <span>SYNC_LATENCY: <span style="color: var(--primary);">45ms</span></span>
+            </div>
+            <div>
+                Kernel Interface Protocol v2.1
+            </div>
+        </footer>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/firewall.js"></script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+{
+  "name": "Behavioral Firewall",
+  "description": "Blockchain-Based Behavioral Firewall system using ML to detect Zero-Day Threats and Insider Attacks. Custom Python blockchain, Flask backend, and Scikit-learn models.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}

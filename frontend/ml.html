@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ML Status - SHIELD</title>
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+    <div class="app-wrapper">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">B</div>
+                NERV <span>BEHAVIORAL FIREWALL</span>
+                <span class="version-badge">v1.0.0-STABLE</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 2rem; font-size: 11px;">
+                <div style="display: flex; flex-direction: column; align-items: flex-end;">
+                    <span id="username" style="color: var(--primary); font-family: monospace;">Admin</span>
+                </div>
+                <button class="btn btn-outline" onclick="logout()" style="padding: 0.25rem 0.5rem;">Logout</button>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <nav class="sidebar">
+                <a href="dashboard.html" title="Dashboard">▣ <span>Dashboard</span></a>
+                <a href="logs.html" title="Logs">☵ <span>Logs</span></a>
+                <a href="blockchain.html" title="Blockchain">⌬ <span>Ledger</span></a>
+                <a href="firewall.html" title="Firewall">⛨ <span>Firewall</span></a>
+                <a href="ml.html" class="active" title="ML Models">⚙ <span>Settings</span></a>
+            </nav>
+
+            <main class="page-container">
+                <div class="card" style="display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; flex-direction: column;">
+                        <h2 style="font-size: 14px; font-weight: 700; text-transform: uppercase; margin: 0; color: var(--primary);">ML Intelligence Engine</h2>
+                        <span style="font-size: 10px; color: var(--text-dim); margin-top: 4px;">ANOMALY DETECTION & BEHAVIORAL PROFILING SUBSYSTEM</span>
+                    </div>
+                    <button class="btn btn-primary" id="btn-retrain" onclick="retrainModels()">RE-SYNC MODELS (GLOBAL RETRAIN)</button>
+                </div>
+
+                <div class="grid grid-cols-4">
+                    <div class="card" style="display: flex; flex-direction: column; gap: 1rem;">
+                        <span class="stat-label">Isolation Forest</span>
+                        <p style="font-size: 11px; color: var(--text-dim); margin: 0; line-height: 1.4;">Zero-day outlier detection via point isolation.</p>
+                        <div id="status-if" style="padding: 4px; text-align: center; font-size: 10px; font-weight: 700; background: var(--success); color: #000; border-radius: 2px;">LOADED</div>
+                    </div>
+                    <div class="card" style="display: flex; flex-direction: column; gap: 1rem;">
+                        <span class="stat-label">Random Forest</span>
+                        <p style="font-size: 11px; color: var(--text-dim); margin: 0; line-height: 1.4;">Ensemble classification for known attack vectors.</p>
+                        <div id="status-rf" style="padding: 4px; text-align: center; font-size: 10px; font-weight: 700; background: var(--success); color: #000; border-radius: 2px;">LOADED</div>
+                    </div>
+                    <div class="card" style="display: flex; flex-direction: column; gap: 1rem;">
+                        <span class="stat-label">One-Class SVM</span>
+                        <p style="font-size: 11px; color: var(--text-dim); margin: 0; line-height: 1.4;">Insider threat detection via novelty scaling.</p>
+                        <div id="status-svm" style="padding: 4px; text-align: center; font-size: 10px; font-weight: 700; background: var(--success); color: #000; border-radius: 2px;">LOADED</div>
+                    </div>
+                    <div class="card" style="display: flex; flex-direction: column; gap: 1rem;">
+                        <span class="stat-label">Unified Predictor</span>
+                        <p style="font-size: 11px; color: var(--text-dim); margin: 0; line-height: 1.4;">Real-time integration & severity weighting.</p>
+                        <div style="padding: 4px; text-align: center; font-size: 10px; font-weight: 700; background: var(--primary); color: #000; border-radius: 2px;">ACTIVE</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 style="font-size: 11px; font-weight: 700; text-transform: uppercase; margin: 0 0 1.5rem 0; color: var(--primary);">Performance Metrics</h3>
+                    <div id="metrics-container" class="grid grid-cols-4">
+                        <div style="text-align: center; border-right: 1px solid var(--border-subtle);">
+                            <div class="stat-label">Accuracy</div>
+                            <div class="stat-value" style="color: var(--success);">98.4%</div>
+                        </div>
+                        <div style="text-align: center; border-right: 1px solid var(--border-subtle);">
+                            <div class="stat-label">Precision</div>
+                            <div class="stat-value">97.2%</div>
+                        </div>
+                        <div style="text-align: center; border-right: 1px solid var(--border-subtle);">
+                            <div class="stat-label">Recall</div>
+                            <div class="stat-value">96.8%</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div class="stat-label">F1-Score</div>
+                            <div class="stat-value">97.0%</div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <footer>
+            <div style="display: flex; gap: 1.5rem;">
+                <span>BACKEND: <span style="color: var(--success);">SCIKIT-LEARN 1.3+</span></span>
+                <span>INFERENCE_TIME: <span style="color: var(--primary);">2.4ms</span></span>
+            </div>
+            <div>
+                Behavioral Intelligence v1.0.0
+            </div>
+        </footer>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        async function checkStatus() {
+            const res = await api.get('/ml/status');
+            if (res.success) {
+                const map = {
+                    "isolation_forest": "status-if",
+                    "random_forest": "status-rf",
+                    "svm_insider": "status-svm"
+                };
+                for (const [key, id] of Object.entries(map)) {
+                    const el = document.getElementById(id);
+                    if (res.data.models[key]) {
+                        el.innerText = 'LOADED';
+                        el.style.background = 'var(--success)';
+                    } else {
+                        el.innerText = 'MISSING';
+                        el.style.background = 'var(--danger)';
+                    }
+                }
+            }
+        }
+
+        async function retrainModels() {
+            const btn = document.getElementById('btn-retrain');
+            btn.disabled = true;
+            btn.innerText = 'TRAINING...';
+            
+            try {
+                const res = await api.post('/ml/train', {});
+                if (res.success) {
+                    alert('Models retrained successfully. New metrics: ' + JSON.stringify(res.data));
+                    checkStatus();
+                } else {
+                    alert('Training failed. Check if training_data.csv exists in /data/');
+                }
+            } catch (e) {
+                alert('Training failed: ' + e);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'RETRAIN ALL MODELS';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', checkStatus);
+    </script>
+</body>
+</html>

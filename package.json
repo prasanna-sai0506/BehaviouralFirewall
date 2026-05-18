@@ -1,0 +1,37 @@
+{
+  "name": "react-example",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "USE_MOCK_DB=true python3 run.py > server.log 2>&1",
+    "start": "USE_MOCK_DB=true python3 run.py > server.log 2>&1",
+    "build": "echo 'No build step for Python environment'",
+    "postinstall": "([ -f get-pip.py ] || curl -sS https://bootstrap.pypa.io/get-pip.py -o get-pip.py) && (python3 -m pip --version || python3 get-pip.py --user --break-system-packages) && (python3 -m pip install --break-system-packages -r requirements.txt || ~/.local/bin/pip install --break-system-packages -r requirements.txt)",
+    "clean": "rm -rf logs ml_models/*.joblib",
+    "lint": "echo 'No lint step defined'"
+  },
+  "dependencies": {
+    "@google/genai": "^1.29.0",
+    "@tailwindcss/vite": "^4.1.14",
+    "@vitejs/plugin-react": "^5.0.4",
+    "dotenv": "^17.2.3",
+    "express": "^4.21.2",
+    "lucide-react": "^0.546.0",
+    "mongomock": "^0.1.2",
+    "motion": "^12.23.24",
+    "react": "^19.0.1",
+    "react-dom": "^19.0.1",
+    "vite": "^6.2.3"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.14.0",
+    "autoprefixer": "^10.4.21",
+    "esbuild": "^0.25.0",
+    "tailwindcss": "^4.1.14",
+    "tsx": "^4.21.0",
+    "typescript": "~5.8.2",
+    "vite": "^6.2.3"
+  }
+}
